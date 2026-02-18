@@ -1,37 +1,44 @@
-{
-  "name": "winner-reserve",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@supabase/supabase-js": "^2.39.0",
-    "lucide-react": "^0.294.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+import React, { useState, useEffect } from 'react';
+import { createClient } from '@supabase/supabase-js';
+
+// 수파베이스 연결 설정
+const supabase = createClient(
+  process.env.REACT_APP_SUPABASE_URL,
+  process.env.REACT_APP_SUPABASE_ANON_KEY
+);
+
+function App() {
+  const [reservations, setReservations] = useState([]);
+
+  useEffect(() => {
+    fetchReservations();
+  }, []);
+
+  async function fetchReservations() {
+    const { data, error } = await supabase
+      .from('reservations')
+      .select('*');
+    
+    if (error) {
+      console.log('에러 발생:', error);
+    } else {
+      setReservations(data);
+    }
   }
+
+  return (
+    <div style={{ padding: '40px', fontFamily: 'sans-serif', textAlign: 'center' }}>
+      <h1 style={{ color: '#0070f3' }}>WINNER GROUP 통합예약</h1>
+      <p style={{ fontSize: '18px' }}>
+        현재 예약 시스템이 정상 작동 중입니다.
+      </p>
+      
+      <div style={{ marginTop: '30px', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
+        <h3>예약 현황</h3>
+        <p>등록된 예약: <strong>{reservations?.length || 0}</strong> 건</p>
+      </div>
+    </div>
+  );
 }
+
+export default App;
